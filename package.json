@@ -17,8 +17,8 @@
   "scripts": {
     "build": "tsc --build",
     "watch": "tsc --watch",
-    "build-run": "npm run build & node build/index.js",
-    "watch-run": "npm run watch & nodemon build/index.js"
+    "app": "node build/index.js",
+    "mon": "nodemon build/index.js"
   },
   "keywords": [],
   "author": "https://github.com/nostjs",
