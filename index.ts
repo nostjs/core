@@ -1,63 +1,37 @@
-import Middleware from "./src/core/commom/Middleware";
-import Route from "./src/core/commom/Route";
+import Middleware from "./src/core/classes/Middleware";
+import Routes from "./src/core/classes/Routes";
 import Express from "./src/core/express";
 
 interface IInit {
   configure: {
     express: {
-      port: any,
+      port: number,
     },
   };
 
   modules: any[];
 }
 
-class Nost {
-  public static middleware(middleware: string, callback: any): void {
-    const m = new Middleware();
-    m.middleware = middleware;
-    m.callback = callback;
-    m.create();
-  }
+export default class Nost {
+  public static init(INIT: IInit): void {
+    const EXPRESS: any = new Express();
+    EXPRESS.configure = INIT.configure.express;
 
-  static get route() {
-    const r = new Route();
-
-    const ROUTE = (method: any, route: string, middlewares: string[], callback: any) => {
-      r.method = method;
-      r.route = route;
-      r.middleware = middlewares;
-      r.callback = callback;
-      r.create();
-    };
-
-    return {
-      get: (route: string, middlewares: string[], callback: any) => {
-        return ROUTE(r.methods.get, route, middlewares, callback);
-      },
-      post: (route: string, middlewares: string[], callback: any) => {
-        return ROUTE(r.methods.post, route, middlewares, callback);
-      },
-    };
-  }
-
-  private EXPRESS: any;
-
-  public init(init: IInit): void {
-    this.EXPRESS = new Express();
-    this.EXPRESS.configure = init.configure.express;
-
-    init.modules.forEach((element: any) => {
+    INIT.modules.forEach((element: any) => {
       const module = new element();
       module.boot();
     });
 
-    this.EXPRESS.middlewares = Middleware.middlewares;
-    this.EXPRESS.routes = Route.routes;
-    this.EXPRESS.listen();
+    EXPRESS.middlewares = Middleware.middlewares;
+    // EXPRESS.routes = Routes.routes;
+    EXPRESS.listen();
+  }
+
+  public static get Middleware() {
+    return Middleware;
+  }
+
+  public static get Routes() {
+    return Routes;
   }
 }
-
-Nost.route.get("/", [], () => {
-  console.log("");
-});

@@ -1,15 +1,16 @@
-const middlewares: any = [];
+const middlewares: any[] = [];
 
 export default class Middleware {
+  public readonly class = Middleware;
   private MIDDLEWARE: any;
   private CALLBACK: any;
 
-  set middleware(middleware: string) {
-    this.MIDDLEWARE = middleware;
+  set middleware(res: string) {
+    this.MIDDLEWARE = res;
   }
 
-  set callback(callback: any) {
-    this.CALLBACK = callback;
+  set callback(res: any) {
+    this.CALLBACK = res;
   }
 
   public create() {
@@ -19,7 +20,7 @@ export default class Middleware {
     });
   }
 
-  static get middlewares(): any[] {
+  public static get middlewares(): any[] {
     return middlewares;
   }
 }

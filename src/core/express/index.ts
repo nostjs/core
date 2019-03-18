@@ -8,8 +8,8 @@ interface IConfigure {
 
 export default class Express {
   private PORT: any;
-  private MIDDLEWARES: any;
-  private ROUTES: any;
+  private MIDDLEWARES: any = [];
+  private ROUTES: any = [];
 
   constructor() {
     this.PORT = process.env.EXPRESS_PORT;
