@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+- stable
+cache: npm
+script:
+- npm run build
+deploy:
+  skip_cleanup: true
+  provider: npm
+  email: gerson.vfs@gmail.com
+  api_key:
+    secure: D8/W8RmPb4BnsZj3Eh6DNVckF6xG1V8t45QoT/7/lAN0btEmNw66vvMFo9Mm1p813hyTn9f652iL2auRjomxTU/ryWv1JICCCYzO3LZnc9t8tLR0zJ8Ve0xjiG7mJH/mwcliztfmxZuIMHcFOO+18hOzK/2/duxsnlxiFNMV1w9GzZB3Q0wgex1ONl1z27LnEN8McRDnPPsveDD9UNjNHDhEP2z3D+48o0l6Ai89KKmZ/8bhTyGEzJyTF+VkPP11sCEMlVek9dyKEnIYYMSi32nmsSv2C9kyUp+1P8bloXUStLmbtvqWI2KQc8UWU3chVR73tF8qlBlolmwqC/ukBeC6vHIUbNiym/J9YakG97p0IxCZlE8D/itYgPqpAN0xKVQ3zWdjDBNETjeOLJkKBUx089Vpjf0TP1oF9Tx06i2r5LkyeAeRe045w1h3b5L+5iC+XBOz+9HY9jcjaHPIR8Akz3XcvL96t+dNOraBk4uWk9FFXOanQUun1HGJwPTDnSVQJh/qLnubwVFSrgMdGzf0KTvKFDrC3oHca4KwqYjBLZVPAa6x/iVwPrqcNhPtogh9IL/effqCu6sK2yZTMYk8lkuUcjMZDP27MQtVIZDDmoko60iMk6z/ylaFxQokJg36MZY07dBg2ZnuhP6nYVegANX9ih/xZzRM89In1Uo=
+  on:
+    tags: true
+    repo: nostjs/nost
