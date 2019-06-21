@@ -2,8 +2,8 @@
   "name": "@nostjs/core",
   "version": "0.0.5",
   "description": "Developed with NostJS.",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "dependencies": {
     "express": "^4.17.1"
   },
