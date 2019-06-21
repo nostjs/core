@@ -23,8 +23,6 @@ function init() {
           break;
       }
     });
-    
-    app.get("");
 
     /* 
     app.get(route.get, (req, res, next) => {
