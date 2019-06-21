@@ -1,5 +1,3 @@
-import Main from "./Main";
+export default class Controller {
 
-export default class Controlller extends Main {
-  //
 }

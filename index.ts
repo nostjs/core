@@ -1,38 +1,52 @@
+import express from 'express';
+
 import Controller from "./src/core/classes/controller";
-import * as Main from "./src/core/classes/Main";
 import Model from "./src/core/classes/model";
-import Middleware from "./src/core/classes/route";
+import Middleware from "./src/core/classes/middleware";
 import Route from "./src/core/classes/route";
 
-import * as loader from "./src/core/commom/loader";
-import * as service from "./src/core/services";
+const models: Model[] = [];
+const middlewares: Middleware[] = [];
+const routes: Route[] = [];
 
-export default class Nost {
-  public init() {
+function init() {
+  const app = express();
 
-    loader.envs().then((object) => {
-      for (const key in object) {
-        if (process.env.hasOwnProperty(key)) {
-          Main.ENV(key, process.env[key]);
-        }
+  routes.forEach((route) => {
+    route.methods.forEach(element => {
+      switch (element.method) {
+        case route.get:
+          app.get(element.route, element.cb);
+          break;
+        case route.post:
+          app.post(element.route, element.cb);
+          break;
       }
     });
+    
+    app.get("");
 
-    loader.sources().then((object) => {
-      for (const key in object.models) {
-        if (object.models.hasOwnProperty(key)) {
-          const element = new object.models[key].default();
-          const model = element.model(element.boot());
+    /* 
+    app.get(route.get, (req, res, next) => {
 
-          for (const name in model) {
-            if (model.hasOwnProperty(name)) {
-              Main.model(name, model[name]);
-            }
-          }
-        }
-      }
     });
-  }
+
+    app.post(route.post, (req, res, next) => {
+
+    });
+     */
+  });
+
+  app.listen(8080, () => {
+    console.log('App listen on port: 8080!');
+  });
+}
+
+export default {
+  init,
+  models,
+  middlewares,
+  routes,
 }
 
 export {
@@ -41,62 +55,3 @@ export {
   Middleware,
   Route,
 };
-
-/*
-await Promise.all([
-  loader.sources.controllers(),
-
-  // loader.sources.middlewares(),
-  // loader.sources.routes(),
-]).then((res) => {
-  res.map((object) => {
-    for (const key in object) {
-      if (object.hasOwnProperty(key)) {
-        const element = new object[key].default();
-        element.boot();
-      }
-    }
-  });
-});
-*/
-
-/*
-const models: any = {};
-
-await loader.models().then((res) => {
-    for (const key in res) {
-      if (res.hasOwnProperty(key)) {
-        const element = new res[key].default();
-        const model = element.model(element.boot());
-
-        for (const name in model) {
-          if (model.hasOwnProperty(name)) {
-            models[name] = model[name];
-          }
-        }
-      }
-    }
-  }, (err) => {
-    //
-  });
-
-  await loader.routes().then((res) => {
-    for (const key in res) {
-      if (res.hasOwnProperty(key)) {
-        const element = new res[key].default();
-        // const route = new element.default();
-        element.boot();
-        // console.log(route);
-      }
-    }
-  });
-
-  await Promise.all([
-    service.express(),
-    service.mongoose(),
-  ]).then((res) => {
-    // console.log(res);
-  }, (err) => {
-    //
-  });
-*/
