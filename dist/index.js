@@ -12,39 +12,86 @@ var middleware_1 = __importDefault(require("./src/core/classes/middleware"));
 exports.Middleware = middleware_1.default;
 var route_1 = __importDefault(require("./src/core/classes/route"));
 exports.Route = route_1.default;
-var models = [];
-var middlewares = [];
-var routes = [];
-function init() {
-    var app = express_1.default();
-    routes.forEach(function (route) {
-        route.methods.forEach(function (element) {
-            switch (element.method) {
-                case route.get:
-                    app.get(element.route, element.cb);
-                    break;
-                case route.post:
-                    app.post(element.route, element.cb);
-                    break;
+var Nost = /** @class */ (function () {
+    function Nost() {
+        this._models = [];
+        this._middlewares = [];
+        this._routes = [];
+    }
+    Object.defineProperty(Nost.prototype, "models", {
+        set: function (models) {
+            var _this = this;
+            models.forEach(function (model) {
+                var element = new model();
+                if (element instanceof model_1.default) {
+                    _this._models.push(element);
+                }
+                else {
+                    throw new Error('Inconpatible class.');
+                }
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Nost.prototype, "middlewares", {
+        set: function (middlewares) {
+            var _this = this;
+            middlewares.forEach(function (middleware) {
+                var element = new middleware();
+                if (element instanceof middleware_1.default) {
+                    _this._middlewares.push(element);
+                }
+                else {
+                    throw new Error('Inconpatible class.');
+                }
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Nost.prototype, "routes", {
+        set: function (routes) {
+            var _this = this;
+            routes.forEach(function (route) {
+                var element = new route();
+                if (element instanceof route_1.default) {
+                    _this._routes.push(element);
+                }
+                else {
+                    throw new Error('Inconpatible class.');
+                }
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Nost.prototype.init = function () {
+        var app = express_1.default();
+        this._middlewares.forEach(function (middleware) {
+            middleware.handle();
+        });
+        this._routes.forEach(function (route) {
+            route.handle();
+        });
+        route_1.default.routes.forEach(function (route) {
+            if (route.method === 'get') {
+                route.middlewares.forEach(function (middleware) {
+                    middleware_1.default.middlewares.forEach(function (element) {
+                        if (element.middleware === middleware) {
+                            app.get(route.route, element.handler);
+                        }
+                    });
+                });
+                app.get(route.route, route.handler);
             }
         });
-        /*
-        app.get(route.get, (req, res, next) => {
-    
+        console.log(middleware_1.default.middlewares);
+        console.log(route_1.default.routes);
+        app.listen(8080, function () {
+            console.log('App listen on port: 8080!');
         });
-    
-        app.post(route.post, (req, res, next) => {
-    
-        });
-         */
-    });
-    app.listen(8080, function () {
-        console.log('App listen on port: 8080!');
-    });
-}
-exports.default = {
-    init: init,
-    models: models,
-    middlewares: middlewares,
-    routes: routes,
-};
+    };
+    return Nost;
+}());
+exports.default = Nost;

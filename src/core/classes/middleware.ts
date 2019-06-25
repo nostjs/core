@@ -1,15 +1,27 @@
-export default class Middleware {
-  middleware: string;
+import express from 'express';
 
-  constructor(middleware: string) {
-    this.middleware = middleware;
+interface Middlewares {
+  middleware: string;
+  handler: express.RequestHandler;
+}
+
+const middlewares: Middlewares[] = [];
+
+export default class Middleware {
+  private _middleware: string;
+
+  constructor() {
+    this._middleware = this.constructor.name.toLocaleLowerCase();
   }
 
-  handle(cb: () => boolean) {
-    if (cb()) {
-      
-    } else {
-      
-    }
+  middleware(handler: express.RequestHandler) {
+    middlewares.push({
+      middleware: this._middleware,
+      handler: handler,
+    });
+  }
+
+  static get middlewares() {
+    return middlewares;
   }
 }

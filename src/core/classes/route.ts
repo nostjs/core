@@ -1,51 +1,55 @@
 import express from 'express';
 
-interface Method {
+interface Routes {
   method: any;
   route: string;
-  cb: express.RequestHandler;
+  handler: express.RequestHandler;
+  middlewares: string[];
 }
 
+const routes: Routes[] = [];
+
 export default class Route {
-  private base: string;
-  middlewares: string[] = [];
-  methods: Method[] = [];
+  private _route: string;
+  private _middlewares: string[] = [];
 
-  constructor(route: string) {
-    this.base = route;
+  constructor() {
+    this._route = this.constructor.name.toLocaleLowerCase();
   }
 
-  get(route: string, cb: express.RequestHandler) {
-    this.methods.push({
-      method: this.get,
-      route: generate(this.base, route),
-      cb: cb,
+  middleware(middlewares: string[], cb: Function) {
+    this._middlewares = middlewares;
+    cb();
+    this._middlewares = [];
+  }
+
+  get(route: string, handler: express.RequestHandler) {
+    routes.push({
+      method: "get",
+      route: generate(this._route, route),
+      handler: handler,
+      middlewares: this._middlewares,
     });
   }
 
-  post(route: string, cb: express.RequestHandler) {
-    this.methods.push({
-      method: 'post',
-      route: generate(this.base, route),
-      cb: cb,
+  post(route: string, handler: express.RequestHandler) {
+    routes.push({
+      method: "post",
+      route: generate(this._route, route),
+      handler: handler,
+      middlewares: this._middlewares,
     });
   }
 
-  set middleware(middlewares: string[]) {
-    this.middlewares = middlewares;
-  }
-
-  get middleware() {
-    return this.middlewares;
+  static get routes() {
+    return routes;
   }
 }
 
 function generate(base: string, route: string): string {
-  const result = (base + route).split('//');
-
-  if (result.length > 0) {
-    return result[0];
-  } else {
-    return result[0];
+  if (route === '/') {
+    route = '';
   }
+
+  return '/' + base + '/' + route;
 }

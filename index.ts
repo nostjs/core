@@ -5,46 +5,76 @@ import Model from "./src/core/classes/model";
 import Middleware from "./src/core/classes/middleware";
 import Route from "./src/core/classes/route";
 
-const models: Model[] = [];
-const middlewares: Middleware[] = [];
-const routes: Route[] = [];
+export default class Nost {
+  private _models: any[] = [];
+  private _middlewares: any[] = [];
+  private _routes: any[] = [];
 
-function init() {
-  const app = express();
+  set models(models: any[]) {
+    models.forEach((model) => {
+      const element = new model();
+      if (element instanceof Model) {
+        this._models.push(element);
+      } else {
+        throw new Error('Inconpatible class.');
+      }
+    });
+  }
 
-  routes.forEach((route) => {
-    route.methods.forEach(element => {
-      switch (element.method) {
-        case route.get:
-          app.get(element.route, element.cb);
-          break;
-        case route.post:
-          app.post(element.route, element.cb);
-          break;
+  set middlewares(middlewares: any[]) {
+    middlewares.forEach((middleware) => {
+      const element = new middleware();
+      if (element instanceof Middleware) {
+        this._middlewares.push(element);
+      } else {
+        throw new Error('Inconpatible class.');
+      }
+    });
+  }
+
+  set routes(routes: any[]) {
+    routes.forEach((route) => {
+      const element = new route();
+      if (element instanceof Route) {
+        this._routes.push(element);
+      } else {
+        throw new Error('Inconpatible class.');
+      }
+    });
+  }
+
+  init() {
+    const app = express();
+
+    this._middlewares.forEach((middleware) => {
+      middleware.handle();
+    });
+
+    this._routes.forEach((route) => {
+      route.handle();
+    });
+
+    Route.routes.forEach((route) => {
+      if (route.method === 'get') {
+        route.middlewares.forEach((middleware) => {
+         Middleware.middlewares.forEach((element) => {
+           if (element.middleware === middleware) {
+            app.get(route.route, element.handler);
+           }
+         });
+        });
+
+        app.get(route.route, route.handler);
       }
     });
 
-    /* 
-    app.get(route.get, (req, res, next) => {
+    console.log(Middleware.middlewares);
+    console.log(Route.routes);
 
+    app.listen(8080, () => {
+      console.log('App listen on port: 8080!');
     });
-
-    app.post(route.post, (req, res, next) => {
-
-    });
-     */
-  });
-
-  app.listen(8080, () => {
-    console.log('App listen on port: 8080!');
-  });
-}
-
-export default {
-  init,
-  models,
-  middlewares,
-  routes,
+  }
 }
 
 export {
